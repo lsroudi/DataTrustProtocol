@@ -23,6 +23,9 @@ pub mod pallet {
 	use frame_system::pallet_prelude::*;
 
 	pub type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
+		/// Type for a DID subject identifier.
+	pub type IdentifierOf<T> = <T as Config>::Identifier;
+	pub type MethodTypeOf<T> = <T as frame_system::Config>::Hash;
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
 	pub trait Config: frame_system::Config + Debug {
@@ -30,6 +33,8 @@ pub mod pallet {
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
 		#[pallet::constant]
 		type PublicKeysPerDid: Get<u32>;
+		/// Type for a DID subject identifier.
+		type Identifier: Parameter + MaxEncodedLen;
 	}
 
 	use crate::{did_attributes::DidProperties};

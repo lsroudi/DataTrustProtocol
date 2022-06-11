@@ -1,9 +1,8 @@
-
 use codec::{Decode, Encode, MaxEncodedLen, WrapperTypeEncode};
 use scale_info::TypeInfo;
 use sp_core::{ecdsa, ed25519, sr25519};
 use crate::{
-	Config,AccountIdOf
+	Config,AccountIdOf,IdentifierOf,MethodTypeOf
 };
 use frame_support::{
 	RuntimeDebug,
@@ -34,7 +33,12 @@ pub type VerificationMethods<T> = BoundedBTreeMap<<T as frame_system::Config>::H
 #[scale_info(skip_type_params(T))]
 
 pub struct DidProperties<T: Config> {
+	// the submitter of Did Creation
 	pub submitter: AccountIdOf<T>,
+	// the identifier of DID
+	pub did: IdentifierOf<T>,
 	pub verification_method: VerificationMethods<T>,
+	pub authentication: MethodTypeOf<T>,
+	pub assertion: MethodTypeOf<T>,
 
 }

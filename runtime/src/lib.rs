@@ -266,6 +266,7 @@ impl pallet_sudo::Config for Runtime {
 impl pallet_did::Config for Runtime {
 	type Event = Event;
 	type PublicKeysPerDid = MaxPublicKeyPerDid;
+	type Identifier = AccountId;
 }
 parameter_types! {
 	pub const MaxPublicKeyPerDid: u32 = 20;

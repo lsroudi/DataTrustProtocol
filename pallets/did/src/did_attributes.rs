@@ -29,6 +29,8 @@ pub struct PublicKeyDetails<T: Config> {
 
 pub type VerificationMethods<T> = BoundedBTreeMap<MethodTypeOf<T>, PublicKeyDetails<T>, <T as Config>::PublicKeysPerDid>;
 
+pub type VerificationRelationShips<T> = BoundedBTreeMap<MethodTypeOf<T>, PublicKeyDetails<T>, <T as Config>::PublicKeysPerDid>;
+
 #[derive(Clone, Decode, Encode, PartialEq, TypeInfo,RuntimeDebug, MaxEncodedLen)]
 #[scale_info(skip_type_params(T))]
 
@@ -40,5 +42,6 @@ pub struct DidProperties<T: Config> {
 	pub verification_method: VerificationMethods<T>,
 	pub authentication: MethodTypeOf<T>,
 	pub assertion: MethodTypeOf<T>,
+	pub verification_relation_ships: VerificationRelationShips<T>
 
 }

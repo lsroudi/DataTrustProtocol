@@ -37,11 +37,25 @@ pub type VerificationRelationShips<T> = BoundedBTreeMap<MethodTypeOf<T>, PublicK
 pub struct DidProperties<T: Config> {
 	// the submitter of Did Creation
 	pub submitter: AccountIdOf<T>,
-	// the identifier of DID
+	// the identifier of DID, refer to the following link for more information
+	// https://www.w3.org/TR/did-core/#identifiers
 	pub did: IdentifierOf<T>,
+	// The verification methods regarding the W3 specification 
+	// For more information please refer to the following link 
+	// https://www.w3.org/TR/did-core/#verification-methods
 	pub verification_method: VerificationMethods<T>,
+	// The authentication rleation ship method regarding the W3  
+	// specification. For more information please refer to the following link 
+	// https://www.w3.org/TR/did-core/#authentication
 	pub authentication: MethodTypeOf<T>,
+	// The assertion relation ship methods regarding the W3 specification. 
+	// For more information please refer to the following link 
+	// https://www.w3.org/TR/did-core/#assertion
 	pub assertion: MethodTypeOf<T>,
+	// The verification relation ships expresses the relationship between
+	// the DID subject and a verification method.  
+	// For more information please refer to the following link 
+	// https://www.w3.org/TR/did-core/#verification-methods	
 	pub verification_relation_ships: VerificationRelationShips<T>
 
 }

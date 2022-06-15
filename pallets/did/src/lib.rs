@@ -44,7 +44,7 @@ pub mod pallet {
 		type Identifier: Parameter + MaxEncodedLen;
 	}
 
-	use crate::{did_attributes::DidProperties};
+	use crate::{did_attributes::{DidProperties,DidPublicKey}};
 	#[pallet::pallet]
 	#[pallet::generate_store(pub(super) trait Store)]
 	pub struct Pallet<T>(_);
@@ -80,7 +80,9 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		pub fn did_create(origin: OriginFor<T>, something: u32, attributes: Box<DidProperties<T>>) -> DispatchResult {
+		pub fn did_create(origin: OriginFor<T>, 
+			attributes: Box<DidProperties<T>>,
+			signature: DidPublicKey) -> DispatchResult {
 			// Check that the extrinsic was signed and get the signer.
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/v3/runtime/origins
@@ -95,7 +97,7 @@ pub mod pallet {
 
 
 			// Emit an event.
-			Self::deposit_event(Event::SomethingStored(something, who));
+			Self::deposit_event(Event::SomethingStored(1, who));
 			// Return a successful DispatchResultWithPostInfo
 			Ok(())
 		}

@@ -59,3 +59,11 @@ pub struct DidProperties<T: Config> {
 	pub verification_relation_ships: VerificationRelationShips<T>
 
 }
+
+impl<T:Config>  DidProperties<T> {
+
+	pub fn new(){
+
+	}
+
+}

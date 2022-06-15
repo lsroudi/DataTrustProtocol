@@ -23,11 +23,16 @@ pub mod pallet {
 	use frame_system::pallet_prelude::*;
 
 	use sp_runtime::traits::BadOrigin;
-	
+
 	pub type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
 		/// Type for a DID subject identifier.
 	pub type IdentifierOf<T> = <T as Config>::Identifier;
 	pub type MethodTypeOf<T> = <T as frame_system::Config>::Hash;
+
+	/// maps from a DID identifier to the DidProperties.
+	#[pallet::storage]
+	#[pallet::getter(fn get_did)]
+	pub type Did<T> = StorageMap<_, Blake2_128Concat, IdentifierOf<T>, DidProperties<T>>;	
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
 	pub trait Config: frame_system::Config + Debug {
@@ -83,8 +88,11 @@ pub mod pallet {
 
 			ensure!(who == attributes.submitter, BadOrigin);
 
-			// Update storage.
-			//<Something<T>>::put(something);
+			let did = attributes.did.clone();
+
+			// TODO ==> check if the AccountIdOf can pay for this transaction
+			// TODO ==> Validation pre insertion
+
 
 			// Emit an event.
 			Self::deposit_event(Event::SomethingStored(something, who));

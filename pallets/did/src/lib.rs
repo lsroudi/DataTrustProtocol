@@ -22,10 +22,17 @@ pub mod pallet {
 	use frame_support::pallet_prelude::*;
 	use frame_system::pallet_prelude::*;
 
+	use sp_runtime::traits::BadOrigin;
+
 	pub type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
 		/// Type for a DID subject identifier.
 	pub type IdentifierOf<T> = <T as Config>::Identifier;
 	pub type MethodTypeOf<T> = <T as frame_system::Config>::Hash;
+
+	/// maps from a DID identifier to the DidProperties.
+	#[pallet::storage]
+	#[pallet::getter(fn get_did)]
+	pub type Did<T> = StorageMap<_, Blake2_128Concat, IdentifierOf<T>, DidProperties<T>>;	
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
 	pub trait Config: frame_system::Config + Debug {
@@ -37,7 +44,7 @@ pub mod pallet {
 		type Identifier: Parameter + MaxEncodedLen;
 	}
 
-	use crate::{did_attributes::DidProperties};
+	use crate::{did_attributes::{DidProperties,DidPublicKey}};
 	#[pallet::pallet]
 	#[pallet::generate_store(pub(super) trait Store)]
 	pub struct Pallet<T>(_);
@@ -73,17 +80,24 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		pub fn did_create(origin: OriginFor<T>, something: u32, _attributes: Box<DidProperties<T>>) -> DispatchResult {
+		pub fn did_create(origin: OriginFor<T>, 
+			attributes: Box<DidProperties<T>>,
+			signature: DidPublicKey) -> DispatchResult {
 			// Check that the extrinsic was signed and get the signer.
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/v3/runtime/origins
 			let who = ensure_signed(origin)?;
 
-			// Update storage.
-			//<Something<T>>::put(something);
+			ensure!(who == attributes.submitter, BadOrigin);
+
+			let did = attributes.did.clone();
+
+			// TODO ==> check if the AccountIdOf can pay for this transaction
+			// TODO ==> Validation pre insertion
+
 
 			// Emit an event.
-			Self::deposit_event(Event::SomethingStored(something, who));
+			Self::deposit_event(Event::SomethingStored(1, who));
 			// Return a successful DispatchResultWithPostInfo
 			Ok(())
 		}

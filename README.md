@@ -8,12 +8,6 @@ We use substrate as a framwork for the blockchain, at first you should :
  - complete the [basic Rust setup instructions](./docs/rust-setup.md).
  - Complete some tutorial [here](https://docs.substrate.io/)
 
-
-
-### Rust Setup
-
-First, complete the [basic Rust setup instructions](./docs/rust-setup.md).
-
 ### Run
 
 Use Rust's native `cargo` command to build and launch the template node:
@@ -40,4 +34,8 @@ This command will start the single-node development chain with non-persistent st
 ```bash
 ./target/release/node-data_trust_protocol --tmp --dev
 ```
+
+### Use Polkadot Js to interact with Blockchain Node
+ - Visit polkadot apps https://polkadot.js.org/apps/#/explorer
+ - Go to menu (developement) and switch to localhost
 

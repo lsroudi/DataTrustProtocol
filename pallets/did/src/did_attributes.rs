@@ -31,6 +31,9 @@ pub type VerificationMethods<T> = BoundedBTreeMap<MethodTypeOf<T>, PublicKeyDeta
 
 pub type VerificationRelationShips<T> = BoundedBTreeMap<MethodTypeOf<T>, PublicKeyDetails<T>, <T as Config>::PublicKeysPerDid>;
 
+pub type AuthenticationSet<T> = BoundedBTreeSet<MethodTypeOf<T>, <T as Config>::PublicKeysPerDid>;
+pub type AssertionSet<T> = BoundedBTreeSet<MethodTypeOf<T>, <T as Config>::PublicKeysPerDid>;
+
 #[derive(Clone, Decode, Encode, PartialEq, TypeInfo,RuntimeDebug, MaxEncodedLen)]
 #[scale_info(skip_type_params(T))]
 
@@ -47,15 +50,15 @@ pub struct DidProperties<T: Config> {
 	// The authentication rleation ship method regarding the W3  
 	// specification. For more information please refer to the following link 
 	// https://www.w3.org/TR/did-core/#authentication
-	pub authentication: MethodTypeOf<T>,
+	pub authentication: Option<DidPublicKey>,
 	// The assertion relation ship methods regarding the W3 specification. 
 	// For more information please refer to the following link 
 	// https://www.w3.org/TR/did-core/#assertion
-	pub assertion: MethodTypeOf<T>,
+	pub assertion: Option<DidPublicKey>,
 	// The verification relation ships expresses the relationship between
 	// the DID subject and a verification method.  
 	// For more information please refer to the following link 
-	// https://www.w3.org/TR/did-core/#verification-methods	
+	// https://www.w3.org/TR/did-core/#verification-relationships	
 	pub verification_relation_ships: VerificationRelationShips<T>
 
 }

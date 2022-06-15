@@ -22,6 +22,8 @@ pub mod pallet {
 	use frame_support::pallet_prelude::*;
 	use frame_system::pallet_prelude::*;
 
+	use sp_runtime::traits::BadOrigin;
+	
 	pub type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
 		/// Type for a DID subject identifier.
 	pub type IdentifierOf<T> = <T as Config>::Identifier;
@@ -73,11 +75,13 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		pub fn did_create(origin: OriginFor<T>, something: u32, _attributes: Box<DidProperties<T>>) -> DispatchResult {
+		pub fn did_create(origin: OriginFor<T>, something: u32, attributes: Box<DidProperties<T>>) -> DispatchResult {
 			// Check that the extrinsic was signed and get the signer.
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/v3/runtime/origins
 			let who = ensure_signed(origin)?;
+
+			ensure!(who == attributes.submitter, BadOrigin);
 
 			// Update storage.
 			//<Something<T>>::put(something);

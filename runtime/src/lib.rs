@@ -131,6 +131,8 @@ pub fn native_version() -> NativeVersion {
 
 const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 
+pub type DidIdentifier = AccountId;
+
 parameter_types! {
 	pub const Version: RuntimeVersion = VERSION;
 	pub const BlockHashCount: BlockNumber = 2400;
@@ -266,7 +268,7 @@ impl pallet_sudo::Config for Runtime {
 impl pallet_did::Config for Runtime {
 	type Event = Event;
 	type PublicKeysPerDid = MaxPublicKeyPerDid;
-	type Identifier = AccountId;
+	type DidIdentifier = AccountId;
 }
 parameter_types! {
 	pub const MaxPublicKeyPerDid: u32 = 20;

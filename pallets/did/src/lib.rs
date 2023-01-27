@@ -12,6 +12,7 @@ pub mod pallet {
     use frame_support::{pallet_prelude::*, error::BadOrigin};
     use frame_system::pallet_prelude::*;
 
+	use crate::{did_attributes::{DidProperties,DidPublicKey}};
 	#[pallet::pallet]
 	#[pallet::generate_store(pub(super) trait Store)]
 	pub struct Pallet<T>(_);
@@ -64,21 +65,26 @@ pub mod pallet {
 
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
 		pub fn did_create(origin: OriginFor<T>, signature : Signature, details:Box<Details<T>>) -> DispatchResult {
+
 			// Check that the extrinsic was signed and get the signer.
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/v3/runtime/origins
 			let who = ensure_signed(origin)?;
 
+
 			ensure!(who == details.submitter, BadOrigin);
 
 			let did = details.did.clone();
+
 
 			// TODO ==> check if the AccountIdOf can pay for this transaction
 			// TODO ==> Validation pre insertion
 
 
 			// Emit an event.
+
 			Self::deposit_event(Event::DidStored(1, who));
+
 			// Return a successful DispatchResultWithPostInfo
 			Ok(())
 		}

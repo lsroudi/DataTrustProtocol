@@ -1,16 +1,17 @@
 [package]
 name = 'pallet-did'
 version = '4.0.0-dev'
-description = 'FRAME pallet template for defining custom runtime logic.'
-authors = ['DataTrustProtocol']
+description = 'FRAME pallet for defining custom did logic.'
+authors = ['lsroudi@gmail.com El akroudi Abdessamad']
 homepage = 'https://substrate.io/'
 edition = '2021'
 license = 'Unlicense'
 publish = false
-repository = "https://github.com/substrate-developer-hub/substrate-node-template/"
+
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 codec = {package = "parity-scale-codec", version = "3.1.2", default-features = false, features = ["derive"]}
@@ -25,14 +26,7 @@ sp-std = {branch = "polkadot-v0.9.19", default-features = false, git = "https://
 frame-benchmarking = {branch = "polkadot-v0.9.19", default-features = false, git = "https://github.com/paritytech/substrate", optional = true}
 pallet-balances = {branch = "polkadot-v0.9.19", default-features = false, git = "https://github.com/paritytech/substrate", optional = true}
 sp-keystore = {branch = "polkadot-v0.9.19", default-features = false, git = "https://github.com/paritytech/substrate", optional = true}
-
-[dev-dependencies]
-env_logger = "0.9.0"
-serde = "1.0.136"
-frame-benchmarking = {branch = "polkadot-v0.9.19", git = "https://github.com/paritytech/substrate"}
-pallet-balances = {branch = "polkadot-v0.9.19", git = "https://github.com/paritytech/substrate"}
-sp-keystore = {branch = "polkadot-v0.9.19", git = "https://github.com/paritytech/substrate"}
-
+syn = { version = "=1.0.82" }
 [features]
 default = ["std"]
 std = [

@@ -11,7 +11,6 @@ pub mod pallet {
 	use super::*;
     use frame_support::{pallet_prelude::*, error::BadOrigin};
     use frame_system::pallet_prelude::*;
-
 	#[pallet::pallet]
 	#[pallet::generate_store(pub(super) trait Store)]
 	pub struct Pallet<T>(_);
@@ -69,16 +68,20 @@ pub mod pallet {
 			// https://docs.substrate.io/v3/runtime/origins
 			let who = ensure_signed(origin)?;
 
+
 			ensure!(who == details.submitter, BadOrigin);
 
 			let did = details.did.clone();
+
 
 			// TODO ==> check if the AccountIdOf can pay for this transaction
 			// TODO ==> Validation pre insertion
 
 
 			// Emit an event.
+
 			Self::deposit_event(Event::DidStored(1, who));
+
 			// Return a successful DispatchResultWithPostInfo
 			Ok(())
 		}

@@ -41,7 +41,7 @@ sp-version = { version = "5.0.0", default-features = false, git = "https://githu
 
 # Local dependencies
 pallet-did = { default-features = false, path = "../pallets/did" }
-
+pallet-vcs = { default-features = false, path = "../pallets/vcs" }
 # Used for the node template's RPCs
 frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.19" }
 pallet-transaction-payment-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.19" }
@@ -70,6 +70,7 @@ std = [
 	"pallet-randomness-collective-flip/std",
 	"pallet-sudo/std",
 	"pallet-did/std",
+	"pallet-vcs/std",
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
@@ -92,7 +93,8 @@ runtime-benchmarks = [
 	"frame-system/runtime-benchmarks",
 	"hex-literal",
 	"pallet-balances/runtime-benchmarks",
-	"pallet-did/runtime-benchmarks",	
+	"pallet-did/runtime-benchmarks",
+	"pallet-vcs/runtime-benchmarks",	
 	"pallet-timestamp/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
 ]

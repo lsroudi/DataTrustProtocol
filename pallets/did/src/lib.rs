@@ -2,7 +2,7 @@
 
 pub use pallet::*;
 
-use sp_std::{boxed::Box, fmt::Debug, prelude::Clone};
+use sp_std::{boxed::Box, fmt::Debug, prelude::Clone,vec::Vec};
 use frame_support::{traits::Get};
 use sp_core::{ecdsa, ed25519, sr25519};
 use codec::Codec;
@@ -12,24 +12,29 @@ pub mod pallet {
     use frame_support::{pallet_prelude::*, error::BadOrigin};
     use frame_system::pallet_prelude::*;
 	#[pallet::pallet]
+	#[pallet::without_storage_info]
 	#[pallet::generate_store(pub(super) trait Store)]
 	pub struct Pallet<T>(_);
 
 	#[pallet::storage]
 	#[pallet::getter(fn get_did)]
-	pub type Did<T> = StorageMap<_, Blake2_128Concat, DidIdentifierOf<T>, Details<T>>;
+	pub type Did<T:Config> = StorageMap<_, Blake2_128Concat, T::AccountId, Details<T>>;
 
 	pub type DidIdentifierOf<T> = <T as Config>::DidIdentifier;
 	pub type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
     #[pallet::config]
     pub trait Config: frame_system::Config + Debug {
-		type DidIdentifier: Parameter + MaxEncodedLen;
-		
-
+		type DidIdentifier: Parameter + MaxEncodedLen;		
 		/// Because this pallet emits events, it depends on the runtime's definition of an event.
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
 		#[pallet::constant]
 		type PublicKeysPerDid: Get<u32>;
+
+		/// Public signing key type for DID
+		type SigningKey: Parameter + Member + Codec + Default;
+
+		/// Public boxing key type for DID
+		type BoxingKey: Parameter + Member + Codec + Default;
 
     }
 
@@ -48,39 +53,38 @@ pub mod pallet {
 		Ecdsa(ecdsa::Signature),
 	}
 
-	#[derive(Clone, Decode, Encode, PartialEq, TypeInfo, MaxEncodedLen,Debug)]
+	#[derive(Decode, Encode, PartialEq, TypeInfo,Debug)]
 	#[scale_info(skip_type_params(T))]
 	#[codec(mel_bound())]
 	pub struct Details<T: Config> {
-		/// a unique identifier
-		pub did: DidIdentifierOf<T>,
-		/// who can create a did
-		pub submitter: AccountIdOf<T>,
+		// signing key
+		signing_key: T::SigningKey,
+		// encryption key
+		boxing_key: T::BoxingKey,
+		// reference
+		did_doc_ref: Option<Vec<u8>>,
+		
 	}
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		pub fn did_create(origin: OriginFor<T>, signature : Signature, details:Box<Details<T>>) -> DispatchResult {
+		pub fn did_create(origin: OriginFor<T>, signing_key: T::SigningKey, boxing_key: T::BoxingKey, did_doc_ref: Option<Vec<u8>>) -> DispatchResult {
 			// Check that the extrinsic was signed and get the signer.
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/v3/runtime/origins
-			let who = ensure_signed(origin)?;
-
-
-			ensure!(who == details.submitter, BadOrigin);
-
-			let did = details.did.clone();
-
-
+			let sender = ensure_signed(origin)?;
+			// add DID to the storage
+			<Did<T>>::insert(sender.clone(), Details::<T> { signing_key, boxing_key, did_doc_ref });
+			// deposit an event that the DID has been created
 			// TODO ==> check if the AccountIdOf can pay for this transaction
 			// TODO ==> Validation pre insertion
 
 
 			// Emit an event.
 
-			Self::deposit_event(Event::DidStored(1, who));
+			Self::deposit_event(Event::DidStored(1, sender));
 
 			// Return a successful DispatchResultWithPostInfo
 			Ok(())

@@ -43,6 +43,7 @@ pub use sp_runtime::{Perbill, Permill};
 
 /// Import the template pallet.
 pub use pallet_did;
+pub use pallet_vcs;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -269,6 +270,13 @@ impl pallet_did::Config for Runtime {
 	type Event = Event;
 	type PublicKeysPerDid = MaxPublicKeyPerDid;
 	type DidIdentifier = AccountId;
+	type SigningKey = Hash;
+	type BoxingKey = Hash;
+}
+
+impl pallet_vcs::Config for Runtime {
+	type Event = Event;
+
 }
 parameter_types! {
 	pub const MaxPublicKeyPerDid: u32 = 20;
@@ -291,6 +299,7 @@ construct_runtime!(
 		Sudo: pallet_sudo,
 		// Include the custom logic from the pallet-template in the runtime.
 		DID: pallet_did,
+		VCS: pallet_vcs
 	}
 );
 

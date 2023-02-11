@@ -276,7 +276,10 @@ impl pallet_did::Config for Runtime {
 
 impl pallet_vcs::Config for Runtime {
 	type Event = Event;
+}
 
+impl pallet_attestation::Config for Runtime {
+	type Event = Event;
 }
 parameter_types! {
 	pub const MaxPublicKeyPerDid: u32 = 20;
@@ -299,7 +302,8 @@ construct_runtime!(
 		Sudo: pallet_sudo,
 		// Include the custom logic from the pallet-template in the runtime.
 		DID: pallet_did,
-		VCS: pallet_vcs
+		VCS: pallet_vcs,
+		ATTESTATION: pallet_attestation
 	}
 );
 

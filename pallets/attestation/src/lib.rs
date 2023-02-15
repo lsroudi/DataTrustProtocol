@@ -13,12 +13,13 @@ pub mod pallet {
 	};
     use frame_system::pallet_prelude::*;
 	#[pallet::pallet]
+	#[pallet::without_storage_info]
 	#[pallet::generate_store(pub(super) trait Store)]
 	pub struct Pallet<T>(_);
 
 	#[pallet::storage]
 	#[pallet::getter(fn get_vcs)]
-	pub type Attestations<T:Config> = StorageMap<_, Blake2_128Concat, T::AccountId, T::Hash>;
+	pub type Attestations<T:Config> = StorageMap<_, Blake2_128Concat, T::Hash, Attestation<T>>;
 
     #[pallet::config]
     pub trait Config: frame_system::Config + Debug {
@@ -27,6 +28,11 @@ pub mod pallet {
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
     }
 
+	#[pallet::error]
+    pub enum Error<T> {
+        /// The claim already exists.
+        AlreadyExist,
+    }
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
@@ -36,7 +42,9 @@ pub mod pallet {
 
 	}
 
-	#[derive(Debug, Encode, Decode, PartialEq)]
+	#[derive(Debug, Encode, Decode, TypeInfo,PartialEq)]
+	#[scale_info(skip_type_params(T))]
+	#[codec(mel_bound())]
 	pub struct Attestation<T: Config> {
 		// hash of the vcs used for this attestation
 		vcs_hash: T::Hash,
@@ -49,27 +57,28 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
-		pub fn attestation_create(origin: OriginFor<T>, hash:T::Hash) -> DispatchResult {
+		pub fn attestation_create(origin: OriginFor<T>, claim_vcs:T::Hash,vcs_hash:T::Hash) -> DispatchResult {
 			// Check that the extrinsic was signed and get the signer.
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/v3/runtime/origins
 			let sender = ensure_signed(origin)?;
 
 
+			// check if attestation already exist 
+			ensure!(!<Attestations<T>>::contains_key(claim_vcs), Error::<T>::AlreadyExist);
 
 			// TODO ==> check if the AccountIdOf can pay for this transaction
 			// TODO ==> Validation pre insertion
 			
-			Attestations::<T>::insert(calim_vcs,Attestation {
-
+			Attestations::<T>::insert(claim_vcs,Attestation {
 				vcs_hash,
 				attester :sender.clone(),
-				rovoked : false
+				revoked : false
 
 			});
 			// Emit an event.
 
-			Self::deposit_event(Event::AttestationStored(1, who));
+			Self::deposit_event(Event::AttestationStored(1, sender));
 
 			// Return a successful DispatchResultWithPostInfo
 			Ok(())
